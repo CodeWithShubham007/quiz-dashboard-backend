@@ -1,0 +1,43 @@
+import { z } from 'zod';
+
+export const quizSchema = z.object({
+  title: z.string().min(2),
+  subject: z.string().min(2),
+  description: z.string().optional().default(''),
+  department: z.enum(['BCA', 'B.Tech']),
+  semester: z.number().min(1).max(8),
+  course: z.string().min(2),
+  duration: z.number().min(1),
+  totalQuestions: z.number().min(1),
+  totalMarks: z.number().min(1),
+  passingMarks: z.number().min(0).default(0),
+  showQuestionNumber: z.boolean().optional().default(true),
+  showMarksToStudents: z.boolean().optional().default(false),
+  startTime: z.string().or(z.date()),
+  endTime: z.string().or(z.date()),
+  resultVisibility: z.enum(['immediate', 'after_end', 'hidden']).default('after_end'),
+  instructions: z.string().optional().default(''),
+  status: z.enum(['draft', 'scheduled', 'active', 'completed', 'cancelled', 'archived']).optional(),
+  securitySettings: z.object({
+    requireFullScreen: z.boolean().optional(),
+    detectTabSwitch: z.boolean().optional(),
+    detectCopyPaste: z.boolean().optional(),
+    detectFocusLoss: z.boolean().optional(),
+    maxViolations: z.number().optional(),
+    autoSubmitOnViolation: z.boolean().optional(),
+  }).optional(),
+  questions: z.array(z.object({
+    id: z.string().optional(),
+    questionText: z.string().min(2),
+    questionType: z.enum(['mcq', 'true_false', 'multiple_select']).default('mcq'),
+    options: z.array(z.object({
+      id: z.string(),
+      text: z.string().min(1),
+    })).min(4),
+    correctAnswer: z.string().min(1),
+    marks: z.number().min(1),
+    explanation: z.string().optional(),
+    order: z.number().int().default(0),
+  })).min(1),
+  negativeMarking: z.boolean().optional(),
+});
